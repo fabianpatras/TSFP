@@ -25,3 +25,8 @@ Even if they are written by me does not mean that all the solves are original :P
   - Path: `TypesSkel/`
   - An introduction to `types`, `polymorphism in Haskell`, `type classes`, `Functor`s
   - Chapter 8 from [`Learn you a haskell`](http://learnyouahaskell.com/chapters) is a **very** good reading for this
+
+- Lab 03: `Interpreter`
+- Link: http://elf.cs.pub.ro/tsfp/labs/parser
+- Path: `Interpreter/Syntax/`, `Interpreter/Main.hs`
+- For now, `cd` into `Interpreter/`, `ghci Main.hs` and run `main`
