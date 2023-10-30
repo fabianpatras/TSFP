@@ -6,7 +6,7 @@ import Classes
     Instantiate the following classes with the Haskell list type:
     * 'Container'
     * 'Invertible'
-    
+
     The inversion should be performed DEEPLY i.e., for the elements as well.
 -}
 
@@ -25,13 +25,13 @@ instance (Invertible a) => Invertible [a] where
     invert = (map invert) . reverse
 
     -- map :: (a -> b) -> [a] -> [b]
-    -- invert :: a -> a -- dar in cazul nostru e (va fi) [a] -> [a] 
+    -- invert :: a -> a -- dar in cazul nostru e (va fi) [a] -> [a]
     -- reverse :: [a] -> [a]
     -- (.) :: (b -> c) -> (a -> b) -> a -> c
     -- (.) has lowe precedence than function composition
 
     -- map invert . reverse == (map invert) . reverse
-    -- (a -> b) -> [a] -> [b] 
+    -- (a -> b) -> [a] -> [b]
     --  unde (a - > b) e `invert`-u, care e `a -> a`
     -- deci `map invert` va avea `[a] -> [a]`
     -- (.) :: (b -> c) -> (a -> b) -> a -> c

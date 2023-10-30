@@ -2,17 +2,17 @@ module Pics where  -- (2p)
 
 import Data.List (intercalate)
 
-{-  
+{-
     The 'Pic' type designates images.
     All image manipulating functions are to be implemented using
     POINT-FREE STYLE.
     If this is unfamiliar to you, please request assistance :).
-    
+
     Adapted from 'S. Thompson (2011). �Haskell: The Craft of Functional
     Programming� (3rd edition). Addison Wesley'.
 -}
 
-type Pic = [String] 
+type Pic = [String]
 
 cross :: Pic
 cross = [ ".#..."

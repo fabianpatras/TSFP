@@ -66,7 +66,7 @@ test_infer = do
       where
         Right typ = infer (internal expr) local global emptySubst 0
     inferInternalError expr local global = isLeft
-        $ infer (internal expr) local global emptySubst 0 
+        $ infer (internal expr) local global emptySubst 0
     emptyContext = makeTContext []
     contextX     = makeTContext [("x", "a")]
     emptySubst   = makeSubst []

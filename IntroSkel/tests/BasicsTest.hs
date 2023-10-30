@@ -59,7 +59,7 @@ test_powerSetRec = powerSetTest powerSetRec
 prop_powerSetRec = powerSetProp powerSetRec
 
 test_powerSetHO :: IO ()
-test_powerSetHO = powerSetTest powerSetHO 
+test_powerSetHO = powerSetTest powerSetHO
 
 --prop_powerSetHO :: TestableWithQCArgs
 prop_powerSetHO = powerSetProp powerSetHO

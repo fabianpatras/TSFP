@@ -18,9 +18,9 @@ runUnif ops subst = runExcept $ runStateT ops subst
 {-|
     Obtains the end of the binding chain for the given type.
     The search ends when either of the following is reached:
-    
+
     * an unbound type variable
-    
+
     * a function type.
 -}
 chainEnd :: Type       -- ^ Type to look up

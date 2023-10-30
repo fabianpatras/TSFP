@@ -38,7 +38,7 @@ test_evalList =
     in assertEqual (["\\x.x", "\\y.y", "\\y.y"], finalContext) $
                    evalListInternal EN.eval
                                     "idx=\\x.x idy=\\y.y (idx idy)"
-                                    initialContext 
+                                    initialContext
   where
     evalListInternal evalSmall exprs context
         = first (map show) $ evalList evalSmall

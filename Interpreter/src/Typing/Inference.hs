@@ -11,25 +11,25 @@ import qualified Data.Map as M
 
 {-|
     The type of inference state.
-    
+
     Should comprise:
-    
+
     * The global typing context
-    
+
     * The type variable counter.
 -}
 data TypingState = TypingState
     { context :: TypingContext
     , counter :: Counter
     } deriving Show
-    
+
 {-|
     The type of the inference mechanism.
-    
+
     Should expose the following:
-    
+
     * Access to the inference state (State)
-    
+
     * Acces to the local typing context (Reader)
 
     * A means for storing unification constraints (Writer)
@@ -43,12 +43,12 @@ runInfer :: Infer a        -- ^ Expression to type
          -> (a, [(Type, Type)])
                            -- ^ The result, along with possible unification
                            --   constraints; otherwise, an error message
-runInfer inf loc glob cnt = evalState (runWriterT $ runReaderT inf loc) $ 
+runInfer inf loc glob cnt = evalState (runWriterT $ runReaderT inf loc) $
                                       TypingState glob cnt
 
 {-|
     Generates a copy of the given type.
-    
+
     Should rely on 'copyM' below.
 -}
 copy :: Type -> Type
@@ -57,7 +57,7 @@ copy = undefined
 {-|
     The type inference function, wich synthesizes the type of the given
     expression.
-    
+
     Should rely on 'inferM' below.
 -}
 infer :: Expression          -- ^ Expression to type
@@ -66,7 +66,7 @@ infer :: Expression          -- ^ Expression to type
       -> Substitution        -- ^ Substitution
       -> Counter             -- ^ Current type variable counter
       -> Either String Type  -- ^ If the typing succeeds,
-                             --   the inferred type; otherwise, an error 
+                             --   the inferred type; otherwise, an error
                              --   message.
 infer expr loc glob subst cnt = undefined
 

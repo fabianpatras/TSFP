@@ -21,7 +21,7 @@ See the tests for use cases.
 The tests make the following assumptions:
 * The data type that encodes lambda expressions instantiates the 'Show' class.
 * The Grammar module exposes the 'parseProgram' function, which takes
-  a program string and returns a list of internal expression representations. 
+  a program string and returns a list of internal expression representations.
 * The Substitution module exposes
     * the 'subst' function, which encodes the substitution rules
     * the 'freeVars' function, which returns the list of free variable names

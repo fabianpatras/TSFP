@@ -7,11 +7,11 @@ author:         Mihnea
 executable Interpreter
   hs-source-dirs:  src
   main-is:         Main.hs
-  build-depends:   
+  build-depends:
                    base >= 4,
                    containers
   ghc-options:     -Wall
-  other-modules:   
+  other-modules:
                    Syntax.Parser,
                    Syntax.Expression,
                    Syntax.Grammar,
@@ -25,7 +25,7 @@ test-suite InterpreterTest
   main-is:         InterpreterTest.hs
   ghc-options:     -Wall -rtsopts
   build-depends:   base >= 4, HTF > 0.9
-  other-modules:   
+  other-modules:
                    Evaluation.Substitution,
                    Evaluation.SubstitutionTest,
                    Evaluation.Normal,
@@ -35,7 +35,7 @@ test-suite InterpreterTest
                    Evaluation.ApplicativeTest,
                    Evaluation.Big,
                    Evaluation.BigTest
-  hs-source-dirs:  
+  hs-source-dirs:
                   test,
                   src
 

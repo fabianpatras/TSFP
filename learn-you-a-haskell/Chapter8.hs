@@ -1,10 +1,10 @@
 module Chapter8
-    ( Point(..)  
-    , Shape(..)  
+    ( Point(..)
+    , Shape(..)
     , surface
     , baseCircle
     , baseRect
-    ) where  
+    ) where
 
 import Data.Map (Map)
 import qualified Data.Map as Map
@@ -12,7 +12,7 @@ import qualified Data.Map as Map
 -- point, radius
 -- point, point
 {-
-    data Shape = Circle Float Float Float | Rectangle Float Float Float Float    deriving (Show) 
+    data Shape = Circle Float Float Float | Rectangle Float Float Float Float    deriving (Show)
 
     surface :: Shape -> Float
 
@@ -23,7 +23,7 @@ import qualified Data.Map as Map
 -- primul `Point` e "(Data) Type"
 -- al doilea `point` e Value Constructor care e o functie cu tipul
 -- Point :: Float -> Float -> Point
-data Point = Point Float Float deriving (Show)  
+data Point = Point Float Float deriving (Show)
 data Shape = Circle Point Float | Rectangle Point Point deriving Show
 
 surface :: Shape -> Float
@@ -33,8 +33,8 @@ surface (Rectangle (Point x1 y1) (Point x2 y2)) = abs $ (x1 - x2) * (y1 - y2)
 
 -- map (Circle (Point 10 20)) [1,2,3]
 
-baseCircle :: Float -> Shape  
-baseCircle = Circle (Point 0 0) 
+baseCircle :: Float -> Shape
+baseCircle = Circle (Point 0 0)
 
 baseRect :: Point -> Shape
 baseRect = Rectangle (Point 0 0)
@@ -42,15 +42,15 @@ baseRect = Rectangle (Point 0 0)
 
 
 ------- Person
--- data Person = Person String String Int Float String String deriving (Show)  
+-- data Person = Person String String Int Float String String deriving (Show)
 
--- data Person = Person { firstName :: String  
---                      , lastName :: String  
---                      , age :: Int  
---                      , height :: Float  
---                      , phoneNumber :: String  
---                      , flavor :: String  
---                      } deriving (Show)   
+-- data Person = Person { firstName :: String
+--                      , lastName :: String
+--                      , age :: Int
+--                      , height :: Float
+--                      , phoneNumber :: String
+--                      , flavor :: String
+--                      } deriving (Show)
 
 -- `Maybe' a` e un "(Data) Type Constructor"
 -- `Maybe' Char` e un "(Data) Type" cu adevarat
@@ -60,22 +60,22 @@ data Maybe' a = Nothing' | Just' a deriving (Show)
 
 
 --------- Vector
-data Vector a = Vector a a a deriving (Show)  
-vplus :: (Num t) => Vector t -> Vector t -> Vector t  
-(Vector i j k) `vplus` (Vector l m n) = Vector (i+l) (j+m) (k+n) 
+data Vector a = Vector a a a deriving (Show)
+vplus :: (Num t) => Vector t -> Vector t -> Vector t
+(Vector i j k) `vplus` (Vector l m n) = Vector (i+l) (j+m) (k+n)
 
 
 -- ~~~~~~~~ Derived instances ~~~~~~~~
 
-data Person = Person { firstName :: String  
-                     , lastName :: String  
-                     , age :: Int  
+data Person = Person { firstName :: String
+                     , lastName :: String
+                     , age :: Int
                      } deriving (Eq, Show, Read)
 
 
 
 data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday
-           deriving (Eq, Ord, Show, Read, Bounded, Enum) 
+           deriving (Eq, Ord, Show, Read, Bounded, Enum)
 
 
 -- ~~~~~~~~ Type synonyms ~~~~~~~~
@@ -83,11 +83,11 @@ data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday
 -- we're just making a synonym for an already existing type. !!!
 type String' = [Char]
 
-type PhoneNumber = String  
-type Name = String  
-type PhoneBook = [(Name,PhoneNumber)]  
+type PhoneNumber = String
+type Name = String
+type PhoneBook = [(Name,PhoneNumber)]
 
-inPhoneBook :: Name -> PhoneNumber -> PhoneBook -> Bool  
+inPhoneBook :: Name -> PhoneNumber -> PhoneBook -> Bool
 inPhoneBook name pnumber pbook = (name,pnumber) `elem` pbook
 
 phoneBook :: PhoneBook
@@ -95,7 +95,7 @@ phoneBook = [("Ionut", "076..."), ("Andreea", "0765...")]
 
 -- `k` si `v` sunt tipuri.
 -- Numim o lista de tipul [(k, v)] -> `AssocList k v`
-type AssocList k v = [(k, v)] 
+type AssocList k v = [(k, v)]
 
 
 -- type IntMap v = Map Int v
@@ -107,41 +107,41 @@ func :: IntMap Char -> Bool
 func x = True
 
 
-data LockerState = Taken | Free deriving (Show, Eq)  
-type Code = String  
-type LockerMap = Map.Map Int (LockerState, Code) 
+data LockerState = Taken | Free deriving (Show, Eq)
+type Code = String
+type LockerMap = Map.Map Int (LockerState, Code)
 
 
-lockerLookup :: Int -> LockerMap -> Either String Code  
-lockerLookup lockerNumber map = 
-    case Map.lookup lockerNumber map of 
+lockerLookup :: Int -> LockerMap -> Either String Code
+lockerLookup lockerNumber map =
+    case Map.lookup lockerNumber map of
         Nothing -> Left $ "The combination " ++ show lockerNumber ++ " is not available for use!"
         Just (state, code) -> if state /= Taken
                                 then Right code
                                 else Left $ "Loker " ++ show lockerNumber ++ " is taken!!!!"
 
-lockers :: LockerMap  
-lockers = Map.fromList   
-    [(100,(Taken,"ZD39I"))  
-    ,(101,(Free,"JAH3I"))  
-    ,(103,(Free,"IQSA9"))  
-    ,(105,(Free,"QOTSA"))  
-    ,(109,(Taken,"893JJ"))  
-    ,(110,(Taken,"99292"))  
-    ]  
+lockers :: LockerMap
+lockers = Map.fromList
+    [(100,(Taken,"ZD39I"))
+    ,(101,(Free,"JAH3I"))
+    ,(103,(Free,"IQSA9"))
+    ,(105,(Free,"QOTSA"))
+    ,(109,(Taken,"893JJ"))
+    ,(110,(Taken,"99292"))
+    ]
 
 
 -- ~~~~~~~~ Recursive data structures ~~~~~~~~
 
 -- data List a = Empty | Cons a (List a) deriving (Show, Read, Eq, Ord)
--- data List a = Empty | Cons { listHead :: a, listTail :: List a} deriving (Show, Read, Eq, Ord)  
+-- data List a = Empty | Cons { listHead :: a, listTail :: List a} deriving (Show, Read, Eq, Ord)
 
 -- `infixr` binds to the right with precedence `5`
 -- which is weaker than `+` or `*`
-infixr 5 :-: 
-data List a = Empty | a :-: (List a) deriving (Show, Read, Eq, Ord)  
+infixr 5 :-:
+data List a = Empty | a :-: (List a) deriving (Show, Read, Eq, Ord)
 
-infixr 5  .++  
+infixr 5  .++
 (.++) :: List a -> List a -> List a
 Empty .++ xs = xs
 (x :-: xs) .++ ys = x :-: (xs .++ ys)
@@ -156,7 +156,7 @@ treeInsert :: (Ord a) => a -> Tree a -> Tree a
 treeInsert x EmptyTree = Node x EmptyTree EmptyTree
 treeInsert x (Node y left right)
     | x == y = Node y left right                -- we don't insert
-    | x < y  = Node y (treeInsert x left) right -- insert the number into the left subtree 
+    | x < y  = Node y (treeInsert x left) right -- insert the number into the left subtree
     | x > y  = Node y left (treeInsert x right)
 
 treeElem :: (Ord a) => a -> Tree a -> Bool
@@ -172,7 +172,7 @@ bigTree = foldr treeInsert EmptyTree [8,3,7,5,6,1,9,0]
 
 -- ~~~~~~~~ Typeclasses 102 ~~~~~~~~
 
-data TrafficLight = Red | Yellow | Green 
+data TrafficLight = Red | Yellow | Green
 
 instance Eq TrafficLight where
     Red == Red = True
@@ -180,14 +180,14 @@ instance Eq TrafficLight where
     Green == Green = True
     _ == _ = False
 
-instance Show TrafficLight where  
-    show Red = "Red light - No Go"  
-    show Yellow = "Yellow light - Slow down"  
+instance Show TrafficLight where
+    show Red = "Red light - No Go"
+    show Yellow = "Yellow light - Slow down"
     show Green = "Green light - You Go Go Go!"
 
 
-class YesNo a where  
-    yesno :: a -> Bool 
+class YesNo a where
+    yesno :: a -> Bool
 
 -- instance YesNo String where
 --     yesno "" = False
@@ -197,25 +197,25 @@ instance YesNo [a] where
     yesno [] = False
     yesno _ = True
 
-instance (YesNo a) => YesNo (Maybe a) where  
-    yesno (Just x) = yesno x  
-    yesno Nothing = False  
+instance (YesNo a) => YesNo (Maybe a) where
+    yesno (Just x) = yesno x
+    yesno Nothing = False
 
-yesnoIf :: (YesNo y) => y -> a -> a -> a  
+yesnoIf :: (YesNo y) => y -> a -> a -> a
 yesnoIf yesnoVal yesResult noResult = if yesno yesnoVal then yesResult else noResult
 
 -- ~~~~~~~~ The Functor typeclass ~~~~~~~~
 
 -- the real implementation, i guess
--- class Functor f where  
---     fmap :: (a -> b) -> f a -> f b 
+-- class Functor f where
+--     fmap :: (a -> b) -> f a -> f b
 
 -- `f` from above is a type constructor that takes one type parameter.
 -- `Maybe` is a `Type Constructor` that takes one type as a parameter (`Maybe a`)
 
-instance Functor Tree where  
-    fmap f EmptyTree = EmptyTree  
-    fmap f (Node x leftsub rightsub) = Node (f x) (fmap f leftsub) (fmap f rightsub)  
+instance Functor Tree where
+    fmap f EmptyTree = EmptyTree
+    fmap f (Node x leftsub rightsub) = Node (f x) (fmap f leftsub) (fmap f rightsub)
 
 {-
     `Functor` e un typeclass (interfata care spune behaviour) pentru
@@ -232,8 +232,8 @@ instance Functor Tree where
     Facem asta prin a da ca input deja un parametru specificat, adica:
 
     ```
-    instance Functor (Either a) where  
-        fmap f (Right x) = Right (f x)  
+    instance Functor (Either a) where
+        fmap f (Right x) = Right (f x)
         fmap f (Left x) = Left x
     ```
 

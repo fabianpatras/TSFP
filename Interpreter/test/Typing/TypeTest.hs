@@ -6,7 +6,7 @@ import Test.Framework
 
 test_similar :: IO ()
 test_similar = do
-    assertBool $ "a" @~=@ "a" 
+    assertBool $ "a" @~=@ "a"
     assertBool $ "a" @~=@ "b"
     assertBool $ "(a->a)" @~=@ "(a->a)"
     assertBool $ "(a->a)" @~=@ "(b->b)"

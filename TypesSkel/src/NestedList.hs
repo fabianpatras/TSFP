@@ -8,22 +8,22 @@ import List ()
     level of intricateness, which would be impossible to specify
     using plain Haskell lists. For instance, the String representation
     of such a nested list might be "[1, [2, 3], 4, 5]".
-    
+
     Instantiate the following classes with the nested list type:
     * 'Show'
     * 'Functor'
     * 'Container'
     * 'Invertible'
-    
+
     The inversion should be performed DEEPLY i.e., for the elements as well.
 -}
 
 
 data NestedList a = Nil | Value a | Nested [NestedList a]
--- Value 5 
+-- Value 5
 -- []       -> Nil
 -- [1]      -> 1 :-: Nil
--- [1, 2]   -> 1 :-: 2 :-: Nil 
+-- [1, 2]   -> 1 :-: 2 :-: Nil
 -- [[]]     -> Nested (Nil)
 -- [1, []]  -> Nested (1 :-: Nil)
 -- [[], 1]  -> Nested ()

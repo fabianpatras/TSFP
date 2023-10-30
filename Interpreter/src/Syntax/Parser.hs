@@ -4,7 +4,7 @@
 module Syntax.Parser where
 
 import Data.Char
-import Control.Applicative  
+import Control.Applicative
 
 {-|
     The type of parsers.
@@ -26,7 +26,7 @@ failure = P $ const Nothing
     const x _ =  x
 
     Nothing :: Maybe c
-    
+
     ($) :: (d -> e) -> d -> e
     ($) f x = f x
     ~~
@@ -36,21 +36,21 @@ failure = P $ const Nothing
 
     const Nothing :: b -> Maybe c
     a == Maybe c
-    
+
     `($)` takes a function `(d -> e)` and an argument `d` and applies the
     function to the argument. It has the highest precedence and it right-to-left
     associative.
 
     ($) :: (d -> e) -> d -> e
     const :: a -> b -> a
-    
+
     Or, `const` takes one argument of type `a` and return a function which
     takes one arg of type `b` and returns something ot type `a`.
     const :: a -> (b -> a)
-    
+
     So `a -> (b -> a)` == `d -> e` which means that
     `d` == `a`
-    `e` == `b -> a` 
+    `e` == `b -> a`
 
     So `$ const` has the type:
     $ const :: a -> (b -> a)
@@ -91,9 +91,9 @@ failure = P $ const Nothing
 
 {-|
     Parses an explicitly given value, without consuming any input.
-    
+
     Examples:
-    
+
     >>> runParser (success 1) "abc"
     Just (1, "abc")
 -}
@@ -102,12 +102,12 @@ success result = P $ \s -> Just (result, s)
 
 {-|
     Parses a given character.
-    
+
     Examples:
-    
+
     >>> runParser (token 'a') "abc"
     Just ('a', "bc")
-    
+
     >>> runParser (token 'a') "bbc"
     Nothing
 -}
@@ -117,12 +117,12 @@ token tok = spot (== tok)
 
 {-|
     Parses a character that satisfies a given property.
-    
+
     Examples:
-    
+
     >>> runParser (spot isLetter) "abc"
     Just ('a', "bc")
-    
+
     >>> runParser (spot isLetter) "123"
     Nothing
 -}
@@ -137,7 +137,7 @@ spot prop = P f
 instance Functor Parser where
     {-
         Applies a function onto the result of a parser. Also written as (<$>).
-        
+
         It is also said that fmap "lifts" or promotes a function of type
         (a -> b) to the parsing context, yielding a function of type
         (Parser a -> Parser b).
@@ -167,32 +167,32 @@ instance Functor Parser where
             Nothing        -> Nothing
     -}
 
-{-|    
+{-|
     Parses a letter at the beginning of the input string.
 
     Examples:
-    
+
     >>> runParser letter "abc"
     Just ('a', "bc")
-    
+
     >>> runParser letter "123"
     Nothing
--}    
+-}
 letter :: Parser Char
 letter = spot isLetter
 
-{-|    
+{-|
     Parses a digit at the beginning of the input string, and returns
     the result as an @Int@:
 
     Examples:
-    
+
     >>> runParser digit "123"
     Just (1, "23")
-    
+
     >>> runParser digit "abc"
     Nothing
--}    
+-}
 digit :: Parser Int
 digit = fmap digitToInt $ spot isDigit
   --  = digitToInt <$> spot isDigit
@@ -225,7 +225,7 @@ instance Applicative Parser where
         pure :: a -> Parser a
     -}
     pure = success
-    
+
     {-
         Performs function application withing a parsing context. Notice that
         the function, of type @(a -> b)@, its argument, of type @a@,
@@ -370,12 +370,12 @@ eof = P f
 
 {-|
     Applies a parser onto an input string, and returns the result.
-    
+
     Examples:
-    
+
     >>> parse digit "123"
     Just 1
-    
+
     >>> parse digit "abc"
     Nothing
 -}

@@ -18,7 +18,7 @@ test_freeVars = do
     assertListsEqualAsSets [] $ freeVarsInternal "\\x.(x x)"
   where
     freeVarsInternal = freeVars . internal
-    
+
 test_subst :: IO ()
 test_subst = do
     -- Replace x with z in x

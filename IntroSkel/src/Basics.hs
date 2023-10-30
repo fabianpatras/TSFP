@@ -74,8 +74,8 @@ powerSetRec (h : t) = powerSetHelper h (powerSetRec t)
 
 -- powerSetRec [] = [[]]
 -- powerSetRec (x:[]) = [x] : powerSetRec []
--- powerSetRec (x:y:[]) = 
--- powerSetRec (x:xs) = 
+-- powerSetRec (x:y:[]) =
+-- powerSetRec (x:xs) =
 
 {-
     6. (1.5p)
@@ -102,8 +102,8 @@ cartesian2 xs ys = [(x,y) | x <- xs, y <- ys]
 
 
 -- Problema subrecursiva e ca am o lista, primul elemint din lista de liste
--- 
+--
 cartesian :: [[a]] -> [[a]]
 
-cartesian [] = [[]] 
+cartesian [] = [[]]
 cartesian (h : t) = [el1 : el2 | el1 <- h, el2 <- cartesian t]
