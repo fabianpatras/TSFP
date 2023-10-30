@@ -360,8 +360,25 @@ letter = spot isLetter
     Nothing
 -}
 digit :: Parser Int
-digit = fmap digitToInt $ spot isDigit
-  --  = digitToInt <$> spot isDigit
+-- digit = fmap digitToInt $ spot isDigit
+digit   = digitToInt <$> spot isDigit
+
+{-
+    How do we read this?
+    We can read it like this:
+        - We have the `Parser Char` produced by `spot isDigit`
+        This parser parses digits (i.e. `0` .. `9`), but we want
+        To get an integer representation of that digit.
+        - We have a function which transforms digits to `Int`s
+        - Because we have `fmap` implemented for `Parser` (without `a`)
+        we know we can apply `fmap f parser` and this will change 2 things:
+            * The type of the parser: from `Parser Char` we get a `Parser Int`
+            Firstly, `Parser Char` which is `spot isDigit` is of a concrete
+            type `String -> Maybe (Char, String)`.
+            Then, out `fmap` instance for `Parser`, applies `f` as a nested `fmap` "call"
+            to the result of the input string parsed by the `Parser Char`.
+            * The value returned from the parser, by the process above.
+-}
 
 {-
     Applicative functors are stronger than general functors, in their ability
