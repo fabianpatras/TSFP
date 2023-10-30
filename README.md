@@ -12,6 +12,10 @@ Even if they are written by me does not mean that all the solves are original :P
 - [TSFP Labs](http://elf.cs.pub.ro/tsfp/labs/haskell-types)
 
 
+## Explanations
+
+At least for `Interpreter` part which is the main one and by far the hardest, I'll try to explain some things in the comments as I go thorough either already existing skelet code or as I write the code.
+
 ## Labs breakdown
 
 - Lab 01: `IntroSkel`
@@ -27,6 +31,6 @@ Even if they are written by me does not mean that all the solves are original :P
   - Chapter 8 from [`Learn you a haskell`](http://learnyouahaskell.com/chapters) is a **very** good reading for this
 
 - Lab 03: `Interpreter`
-- Link: http://elf.cs.pub.ro/tsfp/labs/parser
-- Path: `Interpreter/Syntax/`, `Interpreter/Main.hs`
-- For now, `cd` into `Interpreter/`, `ghci Main.hs` and run `main`
+  - Link: http://elf.cs.pub.ro/tsfp/labs/parser
+  - Path: `Interpreter/Syntax/`, `Interpreter/Main.hs`
+  - For now, `cd` into `Interpreter/`, `ghci Main.hs` and run `main`
