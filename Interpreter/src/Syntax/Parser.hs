@@ -100,6 +100,22 @@ failure = P $ const Nothing
 success :: a -> Parser a
 success result = P $ \s -> Just (result, s)
 
+{-
+    Now, compared with `failure` which produces a `Parser a` that always
+    fails to parser, this one needs to succeed in every parse attempt.
+
+    This means, it needs to return a result of type `Just (a, String)`.
+    This further means that it needs somehting of type `a` to return.
+    So it needs an input argument of type `a`.
+
+    Then, the same thing happens inside `P` constructor
+
+    It is being passed `$` which takes one argument, the function to apply.
+    Effectively, `runParser` is that lambda inside `\s -> Just (result, s)`
+    where `result` is being passed when the `Parser a` value is constructed
+    with `success`.
+-}
+
 {-|
     Parses a given character.
 
