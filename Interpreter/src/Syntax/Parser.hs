@@ -21,6 +21,74 @@ newtype Parser a = P { runParser :: String -> Maybe (a, String) }
 failure :: Parser a
 failure = P $ const Nothing
 
+{-
+    const :: a -> b -> a
+    const x _ =  x
+
+    Nothing :: Maybe c
+    
+    ($) :: (d -> e) -> d -> e
+    ($) f x = f x
+    ~~
+    `const` takes 2 arguments and returns the first, ignoring the second
+    so `const Nothing` will be a function which will take one argument,
+    ignore it, and return `Nothing`.
+
+    const Nothing :: b -> Maybe c
+    a == Maybe c
+    
+    `($)` takes a function `(d -> e)` and an argument `d` and applies the
+    function to the argument. It has the highest precedence and it right-to-left
+    associative.
+
+    ($) :: (d -> e) -> d -> e
+    const :: a -> b -> a
+    
+    Or, `const` takes one argument of type `a` and return a function which
+    takes one arg of type `b` and returns something ot type `a`.
+    const :: a -> (b -> a)
+    
+    So `a -> (b -> a)` == `d -> e` which means that
+    `d` == `a`
+    `e` == `b -> a` 
+
+    So `$ const` has the type:
+    $ const :: a -> (b -> a)
+    which is
+    $ const :: a -> b -> a
+
+    And now, the fist argument being `Nothing`, we get
+
+    $ const Nothing :: b -> Maybe c
+
+    And `P` is a Value Constructor which has the following type
+    P :: (String -> Maybe (a, String)) -> Parser a
+
+    So it takes as input a function of type
+    String -> Maybe (a, String)
+
+    And we're passing `$ const Nothing` which is of type
+    b -> Maybe c
+
+    By pattern mathching we get that
+    `b` == `String`
+    `Maybe c` == `Maybe (a, String)` so `c` == `(a, String)`
+
+    `$ const Nothing` is out inner function, `runParser`.
+
+    It takes as input any String and returns a `Nothing` of type `Maybe (a, String)`
+
+    We can run this parser by calling the accessor function `runParser`, which is
+    effectively the name of the value of type `String -> Maybe (a, String)` which
+    `Parser a` contains:
+
+    runParser :: Parser a -> String -> Maybe (a, String)
+
+    The first argument is the `Parser a` which we want to access the inner function of.
+    The second argument is the input string of the parser.
+-}
+
+
 {-|
     Parses an explicitly given value, without consuming any input.
     
