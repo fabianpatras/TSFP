@@ -128,8 +128,80 @@ success result = P $ \s -> Just (result, s)
     Nothing
 -}
 token :: Char -> Parser Char
-token tok = spot (== tok)
-       -- = spot . (==)
+-- token tok = spot (== tok)
+token     = spot . (==)
+
+{-
+    We want to be able to create custom Parsers which can parse different stuff.
+    An example is a `Char`. We want to be able to parse a `Char`.
+
+    We're doing that with an auxiliary function: `spot`.
+
+    We have `spot` implemented. `spot` takes a predicate as input.
+
+    We can construct that predicate to be something like
+    \input_token -> input_token == to_be_matched_char
+    which is an equallity for a constant `Char` `to_be_matched_char`.
+
+    There is `(==)` function with the signature
+    (==) :: (Eq a) => a -> a -> Bool
+    We can create a predicate of type
+    Char -> Bool
+    by passing a `Char` as the first argument of `(==)`.
+
+    This would look like `\tok -> == tok`, but we have `tok` as input to `token` function.
+
+    Q: How do we write it point free?
+    A: `token = spot . (==)`
+
+    Let's check it by looking at the types.
+
+    spot :: (Char -> Bool) -> Parser Char
+    (==) :: Eq a => a -> a -> Bool
+    (.)  :: (c -> d) -> (b -> c) -> b -> d
+    (.) f g x = f (g x)
+    OR
+
+    (.)  :: (c -> d) -> (b -> c) -> (b -> d)
+    (.) f g = \x -> f (g x)
+    Which is to be read that is takes 2 functions as arguments and returns a function.
+
+    `(.)` is defined as `infixr 9 .` which means that `.` or `.` has the highest precedence
+    possible and it ir right associative. So `f . g . h` would be interpreted as `f . (g . h)`
+
+    `.` can be used in infix notation like `f . g` or in prefix notation like `(.) f g`.
+
+    In our case `spot . (==)` is equivalent to `(.) spot (==)`
+
+    Let's start the type analysis, we want to get the type of `spot . (==)` or `(.) spot (==)`.
+    spot :: (Char -> Bool) -> Parser Char
+    (==) :: Eq a => a -> a -> Bool
+    (.)  :: (c -> d) -> (b -> c) -> b -> d
+
+    (.) spot (==) means that
+        - `spot` is of type `c -> d`
+        - `(==)` is of type `b -> c`
+
+    But `spot` is `(Char -> Bool) -> Parser Char` so:
+        - `c` == `Char -> Bool`
+        - `d` == `Parser Char`
+    And `(==)` is `a -> a -> Bool` which is `a -> (a -> Bool)` so:
+        - `b` == `a`
+        - `c` == `a -> Bool`, but `c` == `Char -> Bool` so:
+            - `a` == `Char` so:
+                - b` == `Char`
+
+    The type of `spot . (==)` is `b -> d` which is `Char -> Parser Char`.
+    Simple as that :)
+
+    How is `spot . (==)` to be read is like this:
+    It translates to the lambda `\x -> spot ((==) x)` so we have to apply to
+    `spot` as argument the result of `(==) x` which is a predicate that checks for
+    equatily to `x`. And we know that `spot` is exactly looking for that, a predicate
+    to use to create the `Parser Char`.
+
+    Nice? I guess.
+-}
 
 {-|
     Parses a character that satisfies a given property.
@@ -149,6 +221,25 @@ spot prop = P f
     f (x : xs)
         | prop x    = Just (x, xs)
         | otherwise = Nothing
+
+{-
+    `spot` takes a predicate as input and creates a Parser which parses
+    `Char`s that pass that predicate / property.
+
+    By how `spot` is implemented we can see that `f` is actually `runParser`.
+
+    The type of `f` is `[Char] -> Maybe (Char, [Char])` which is
+    `String -> Maybe (Char, String)`.
+
+    `f` is looking at the first element of its input.
+
+    If the element does not exist then the parser fails and returns `Nothing`.
+    If the element exists and is passes the property, then return that element and
+    the rest of the list (of `Char`s).
+    If the element does not passes the property, return `Nothing` agian.
+
+    We'll use this to implement `token` from above which maches exact a constant `Char`.
+-}
 
 instance Functor Parser where
     {-
