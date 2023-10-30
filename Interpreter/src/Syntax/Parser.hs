@@ -274,6 +274,65 @@ instance Functor Parser where
             Nothing        -> Nothing
     -}
 
+{-
+    The `Functor` is "applied" to a Type Constructor of kind `* -> *`.
+
+    For us, this means `Parser` WITHOUT `a`.
+
+    Let's see this point free way of writing `fmap`.
+    fmap f (P p) = P $ fmap (applyToFirst f) . p
+
+    It can be read as:
+                 = P $ \s -> (fmap (applyToFirst f))         (p s)
+                              fmap :: a -> b          `Maybe (a, String)`
+                                    applyToFirst applies f to the first of the tuple.
+
+    There is an alias to fmap (compare it to `($)`):
+
+     ($)  ::              (a -> b) ->   a ->   b
+    (<$>) :: Functor f => (a -> b) -> f a -> f b
+    <$> = fmap
+
+    `<$>` is defined as `infixl 4 <$>` which means if is left associative
+    so `f <$> g <$> h` is to be interpreted as `(f <$> g) <$> h`
+
+    With `<$>` we'll have this type of calling:
+    >>> even <$> (1,2)
+    (1, True)
+
+
+    `Functor` class also has `(<$)` operator which is defined as `infixl 4  <$`
+    so it is left associative, just like `(<$>)`.
+
+    ```Replace all locations in the input with the same value.```
+    (<$) :: a -> f b -> f a
+    (<$) = fmap . const
+
+    This is to be read like this:
+    `(<$)` takes 2 arguments as input one is a "normal"/"doesnt-matter-if-functor-or-not" type
+    the second is a functor.
+
+    (<$) = fmap . const
+         = \x -> fmap (const x)
+         which can be rewritten as
+    (<$) x = fmap (const x)
+           = fmap (\y -> const x y)
+         which can be rewritten as
+    (<$) x functor = fmap (\y -> const x y) functor
+    Which is to be read like this:
+        We have a the `functor` and a value `x` and we replace the inner value of
+        the `functor` with the value `x`
+
+    >>> 32 <$ Just "Salut"
+    Just 32
+
+    What we did is to throw out the window the inner value of the functor and replace it
+    with the "hardcoded" value of `x`.
+
+    >>> map ((<$) 32) [Just "Hello", Just "Andrei"]
+    [Just 32, Just 32]
+-}
+
 {-|
     Parses a letter at the beginning of the input string.
 
