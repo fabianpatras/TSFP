@@ -32,5 +32,16 @@ At least for `Interpreter` part which is the main one and by far the hardest, I'
 
 - Lab 03: `Interpreter`
   - Link: http://elf.cs.pub.ro/tsfp/labs/parser
-  - Path: `Interpreter/Syntax/`, `Interpreter/Main.hs`
+  - Path: `Interpreter/src/Syntax/`, `Interpreter/src/Main.hs`
   - For now, `cd` into `Interpreter/`, `ghci Main.hs` and run `main`
+  - This lab consisted of:
+    - implementing parsers for the tokens (`[a-zA-Z]+` (words), `\`, `(`, `)`, `=`, `.`, `EOF`):
+      - See [`Interpreter/src/Syntax/Parser.hs`](Interpreter/src/Syntax/Parser.hs)
+    - defining `data Expression` to hold the different `Expression` types:
+      - Variable: `x`
+      - Lambda function: `\x.Expr`
+      - Application: `(Expr Expr)`
+      - Definition: `var=Expr` (can only occur at top level, see `parseProgram` definition)
+      - See [`Interpreter/src/Syntax/Expression.hs`](Interpreter/src/Syntax/Expression.hs)
+    - impement parser for the `Expression` types above:
+      - See [`Interpreter/src/Syntax/Grammar.hs`](Interpreter/src/Syntax/Grammar.hs)
