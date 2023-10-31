@@ -1,10 +1,11 @@
 module Syntax.Expression where
 
+{-
+    TODO: implement proper Show
+-}
 data Expression = Var String
                 | Lambda String Expression
-                | Application Expression Expression deriving Show
+                | Application Expression Expression
+                | Definition String Expression deriving Show
 
-data TopLvlExpression = Definition Expression Expression
-                      | NormalExpression Expression deriving Show
-
-newtype Program = ListOfTopLvlExpressions [TopLvlExpression] deriving (Show)
+newtype Program = Expressions [Expression] deriving (Show)

@@ -5,8 +5,8 @@ import Syntax.Parser
 import Control.Applicative
     (Applicative (liftA2), Alternative ((<|>), many, some))
 
-parseProgram :: String -> Maybe [TopLvlExpression]
-parseProgram = parse (many parseTopLvlExpression)
+parseProgram :: String -> Maybe [Expression]
+parseProgram = parse (many (parseTopLevel <* many whiteSpace) <* eof)
 
 parseVar :: Parser Expression
 parseVar = Var <$> word
@@ -24,17 +24,13 @@ parseApplication = liftA2
                     (parseExpression <* many whiteSpace  <* rightParen)
 
 parseExpression :: Parser Expression
-parseExpression = (parseApplication <|> parseLambda <|> parseVar) -- <* many whiteSpace
+parseExpression = parseApplication <|> parseLambda <|> parseVar
 
-parseDefinition :: Parser TopLvlExpression
+parseDefinition :: Parser Expression
 parseDefinition = liftA2
                     Definition
-                    (parseExpression <* equals)
+                    (word <* equals)
                     parseExpression
 
-parseNormalExpression :: Parser TopLvlExpression
-parseNormalExpression = NormalExpression <$> parseExpression
-
-parseTopLvlExpression :: Parser TopLvlExpression
-parseTopLvlExpression = parseDefinition <|> parseNormalExpression
-
+parseTopLevel :: Parser Expression
+parseTopLevel = parseDefinition <|> parseExpression

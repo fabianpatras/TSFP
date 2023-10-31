@@ -3,14 +3,15 @@
 -}
 module Syntax.Parser
     ( Parser
-    , parse
-    , word
     , backSlash
     , dot
+    , eof
     , equals
+    , parse
     , leftParen
     , rightParen
     , whiteSpace
+    , word
     ) where
 
 import Data.Char
