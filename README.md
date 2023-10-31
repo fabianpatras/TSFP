@@ -43,5 +43,6 @@ At least for `Interpreter` part which is the main one and by far the hardest, I'
       - Application: `(Expr Expr)`
       - Definition: `var=Expr` (can only occur at top level, see `parseProgram` definition)
       - See [`Interpreter/src/Syntax/Expression.hs`](Interpreter/src/Syntax/Expression.hs)
+      - Instance `Show` for `Expression`
     - impement parser for the `Expression` types above:
       - See [`Interpreter/src/Syntax/Grammar.hs`](Interpreter/src/Syntax/Grammar.hs)
