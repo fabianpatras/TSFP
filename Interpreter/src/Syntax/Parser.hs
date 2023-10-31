@@ -1,7 +1,17 @@
 {-|
     A parsing module, based on applicative functors.
 -}
-module Syntax.Parser where
+module Syntax.Parser
+    ( Parser
+    , parse
+    , word
+    , backSlash
+    , dot
+    , equals
+    , leftParen
+    , rightParen
+    , whiteSpace
+    ) where
 
 import Data.Char
 import Control.Applicative
@@ -570,3 +580,52 @@ parse = (fmap fst .) . runParser
 -}
 applyToFirst :: (a -> b) -> (a, c) -> (b, c)
 applyToFirst f (x, y) = (f x, y)
+
+
+-- Start of token Parser
+
+{-
+    Parses at least one letter.
+    Will be used to parse variable names such as "x" or "xy" or declaration names
+    such as "true" from "frue=\x.\y.x"
+-}
+word :: Parser String
+word = some letter
+
+{-
+    Parses `\` characher.
+-}
+backSlash :: Parser Char
+backSlash = spot (== '\\')
+
+{-
+    Parses `.` character.
+-}
+dot :: Parser Char
+dot = spot (== '.')
+
+{-
+    Parses `=` character.
+-}
+equals :: Parser Char
+equals = spot (== '=')
+
+
+{-
+    Parses '(' character.
+-}
+leftParen :: Parser Char
+leftParen = spot (== '(')
+
+{-
+    Parses ')' character.
+-}
+rightParen :: Parser Char
+rightParen = spot (== ')')
+
+
+{-
+    Parses any of " \t\n\r\f\v".
+-}
+whiteSpace :: Parser Char
+whiteSpace = spot isSpace
