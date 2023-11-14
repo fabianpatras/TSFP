@@ -46,3 +46,20 @@ At least for `Interpreter` part which is the main one and by far the hardest, I'
       - Instance `Show` for `Expression`
     - impement parser for the `Expression` types above:
       - See [`Interpreter/src/Syntax/Grammar.hs`](Interpreter/src/Syntax/Grammar.hs)
+
+- Lab 04: `Textual Substitution`
+  - Link: http://elf.cs.pub.ro/tsfp/labs/substitution
+  - Path: [`Interpreter/src/Evaluation/Substitution.hs`](Interpreter/src/Evaluation/Substitution.hs)
+  - This lab consisted of:
+    - implementing the substitution rules for the Untyped Lambda Calculus interpreter
+    - proper evaluation steps are coming in the next lab
+  - You can `cd` into `Interpreter/src` and `ghci Evaluation/Substitution.hs` then test the substitution with the following cases:
+    - `<\x.x>[y/x]`
+      - Input: `subst "x" (Var "y") (Lambda "x" (Var "x"))`
+      - Expected result: `\x.x`
+    - `<\y.y>[y/x]`
+      - Input: `subst "x" (Var "y") (Lambda "y" (Var "y"))`
+      - Expected result: `\y#.y#` because the original `y` from `\y.y` gets replaced with `y#` before doing the substitution (that does not exist). Ideally, this should be optimized into outputting `\y.y`, but I don't see how to do that without hardcoding.
+    - `<\y.(x y)>[(\x.x y)/x]`
+      - Input: `subst "x" (Application (Lambda "x" (Var "x")) (Var "y")) (Lambda "y" (Application (Var "x") (Var "y")))`
+      - Expected result: `\y#.((\x.x y) y#)`
