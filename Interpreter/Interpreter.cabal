@@ -19,6 +19,7 @@ executable Interpreter
                    Evaluation.Normal,
                    Evaluation.Applicative,
                    Evaluation.Big
+                   Evaluation.Context
 
 test-suite InterpreterTest
   type:            exitcode-stdio-1.0
@@ -26,6 +27,10 @@ test-suite InterpreterTest
   ghc-options:     -Wall -rtsopts
   build-depends:   base >= 4, HTF > 0.9
   other-modules:
+                   Evaluation.Context
+                   Syntax.Expression
+                   Syntax.Grammar
+                   Syntax.Parser
                    Evaluation.Substitution,
                    Evaluation.SubstitutionTest,
                    Evaluation.Normal,

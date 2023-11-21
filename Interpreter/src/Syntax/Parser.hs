@@ -3,6 +3,7 @@
 -}
 module Syntax.Parser
     ( Parser
+    , runParser
     , backSlash
     , dot
     , eof
