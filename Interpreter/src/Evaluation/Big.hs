@@ -2,8 +2,6 @@ module Evaluation.Big where
 
 import Syntax.Expression
 import Evaluation.Context
-import qualified Evaluation.Normal as NormalOrder
-import qualified Evaluation.Applicative as ApplicativeOrder
 
 import Data.Traversable
 import Data.Tuple
@@ -22,20 +20,11 @@ evalBig :: (Expression -> Context -> (Expression, Context))  -- ^ Small-stepper
                                   --   together with a possibly enriched context
                                   --   in case of definition
 
--- If we get to a Variable, we stop
--- evalBig f var@(Var v) context = (var, context)
-
-evalBig f var@(Var x) context = case f var context of
-                                    res@(var'@(Var x'), ctx) -> if x == x' then res else (evalBig f var' ctx)
-                                    res@(e, ctx) -> evalBig f e ctx
-
--- evalBig f lambda@(Lambda x e) context = case f lambda context of
-
-
 evalBig f expr context = case f expr context of
-                            res@(var@(Var _), ctx) -> evalBig f var ctx
+                            (var@(Var _), ctx) -> f var ctx
                             res@(Lambda _ _, _) -> res
-                            res@(app@(Application _ _), ctx) -> evalBig f app ctx
+                            (app@(Application _ _), ctx) -> evalBig f app ctx
+                            (Definition _ _, _) -> undefined
 
 {-|
     Big-step evaluation of a list of expressions, starting with
@@ -48,5 +37,4 @@ evalList :: (Expression -> Context -> (Expression, Context))
          -> [Expression]
          -> Context
          -> ([Expression], Context)
--- evalList = undefined
 evalList f exprs context = swap $ mapAccumL (\c e -> swap $ evalBig f e c) context exprs

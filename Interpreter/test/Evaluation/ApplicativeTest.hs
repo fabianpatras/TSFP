@@ -29,6 +29,9 @@ test_eval = do
     -- Something specific to applicative-order, as opposed to normal-order
     assertEqual ("(\\x.y (\\x.(x x) \\x.(x x)))", empty) $
                 evalInternal "(\\x.y (\\x.(x x) \\x.(x x)))" empty
+    -- Eval 2
+    assertEqual ("(\\x.(x x) x)", empty) $
+        evalInternal "(\\x.(x x) (\\z.z x))" empty
   where
     evalInternal expr context = first show $ eval (internal expr) context
     empty = makeContext []

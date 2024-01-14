@@ -2,7 +2,7 @@
 
 Hello, this is a repository containing **my** solved lab materials for Type System and Functional Programming course from Automatic Control and Computer Science, UPB.
 
-Teacher: Mihnea Costin MURARU
+Teacher: Mihnea Costin MURARU - mihnea.muraru@upb.ro
 
 Even if they are written by me does not mean that all the solves are original :P. I am learning.
 
@@ -63,3 +63,15 @@ At least for `Interpreter` part which is the main one and by far the hardest, I'
     - `<\y.(x y)>[(\x.x y)/x]`
       - Input: `subst "x" (Application (Lambda "x" (Var "x")) (Var "y")) (Lambda "y" (Application (Var "x") (Var "y")))`
       - Expected result: `\y#.((\x.x y) y#)`
+
+- Lab 05: `Substitution-based evaluation`
+  - Link: http://elf.cs.pub.ro/tsfp/labs/evaluation
+  - Path: (Start from EvalBig) [`Interpreter/src/Evaluation/Big.hs`](Interpreter/src/Evaluation/Big.hs)
+  - This lab consisted of:
+    - Implementing single stepping evaluation function for Normal and Applicative Order evaluation.
+    - Implementing `bigEval` function which takes a single stepping evaluation function and evaluates the input expression until the evaluation can't proceed any further.
+  - To test the implementations:
+    - `cd Interpeter`
+    - `cabal test`
+      - will run the test suite defined in `Interpreter.cabal`, which is `InterpreterTest.hs`
+      - some tests are commented out.

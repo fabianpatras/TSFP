@@ -1,7 +1,6 @@
 module Evaluation.Substitution where
 
 import Syntax.Expression
-import Syntax.Grammar (parseProgram)
 import Data.Set
 {-|
     Returns a set of free variables in an expression.
@@ -67,6 +66,9 @@ subst x e' (Lambda y e)
         fve' = freeVarsSet e'
 
 subst x e (Application e' e'') = Application (subst x e e') (subst x e e'')
+
+-- To silence warnings.
+subst _ _ (Definition _ _) = undefined
 
 -- internal :: String -> Expression
 -- internal = maybe (error "Syntax error!") head . parseProgram

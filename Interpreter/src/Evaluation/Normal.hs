@@ -8,9 +8,6 @@ import Syntax.Expression
 import qualified Data.Map.Lazy as M
 import Data.Maybe
 
-
-customContext = Context $ M.singleton "true" (Lambda "x" (Lambda "y" (Var "x")))
-
 {-|
     Small-step normal-order evaluation of a given expression,
     within a given context.
@@ -22,11 +19,11 @@ eval :: Expression             -- ^ Expression to be evaluated
 
 -- For a variable, check if the variable means something in the context and return
 -- or else it's just a variable and the evaluation ends
-eval var@(Var x) ctx@(Context m) = (Data.Maybe.fromMaybe (Var x) (M.lookup x m), ctx)
+eval (Var x) ctx@(Context m) = (Data.Maybe.fromMaybe (Var x) (M.lookup x m), ctx)
 
 -- This is the end of a computation for normal-order evaluation.
 -- We don't care if `e` cand still be evaluated.
-eval lambda@(Lambda x e) context = (lambda, context)
+eval lambda@(Lambda _ _) context = (lambda, context)
 
 -- Now, for `Application`s we got two cases:
 -- 1) Reduce step, when we have a lambda as the left expression
@@ -36,6 +33,6 @@ eval (Application (Lambda x e) e') context = (subst x e' e, context)
 eval (Application e e'') context = (Application e' e'', context')
     where (e', context') = eval e context
 
--- Finally, evaluation a definition modifies the context
--- and returns the epression
-eval (Definition var e) context@(Context m) = (e, Context $ M.insert var e m)
+-- Finally, evaluation of a definition modifies the context
+-- and returns the expression
+eval (Definition var e) (Context m) = (e, Context $ M.insert var e m)

@@ -17,10 +17,10 @@ eval :: Expression             -- ^ Expression to be evaluated
                                --   enriched context, in case of definition
 
 -- For a variable it's the same as for Normal-Order Evaluation
-eval var@(Var x) ctx@(Context m) = (Data.Maybe.fromMaybe (Var x) (M.lookup x m), ctx)
+eval (Var x) ctx@(Context m) = (Data.Maybe.fromMaybe (Var x) (M.lookup x m), ctx)
 
 -- For a lambda it's the same as for Normal-Order Evaluation
-eval lambda@(Lambda x e) context = (lambda, context)
+eval lambda@(Lambda _ _) context = (lambda, context)
 
 
 -- Now, for `Application`s we got three cases:
@@ -31,9 +31,9 @@ eval (Application (Lambda x e) lambda@(Lambda _ _)) context = (subst x lambda e,
 -- 3) Eval_2, when the left expression is a Lambda and the right expression can be evaluted,
 -- evaluate the right expression
 --
--- It NEEDS to be declared before `Eval_1` so Haskell will pick the pasticular case over
+-- It NEEDS to be declared before `Eval_1` so Haskell will pick the particular case over
 -- the generic one
-eval (Application lambda@(Lambda x e'') e) context = (Application lambda e', context)
+eval (Application lambda@(Lambda _ _) e) context = (Application lambda e', context')
     where (e', context') = eval e context
 
 -- 2) Eval_1, When the left expression can be evaluated, evaluate it
@@ -42,4 +42,4 @@ eval (Application e e'') context = (Application e' e'', context')
 
 -- Finally, evaluation a definition modifies the context
 -- and returns the epression
-eval (Definition var e) context@(Context m) = (e, Context $ M.insert var e m)
+eval (Definition var e) (Context m) = (e, Context $ M.insert var e m)
