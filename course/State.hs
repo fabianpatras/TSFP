@@ -1,9 +1,12 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use tuple-section" #-}
 module State where
 
 import Control.Applicative
 import Control.Monad
 import Control.Monad.Identity hiding (fix)
 import qualified Data.Map as M
+import qualified Control.Applicative as input
 
 {-
     The type of computations operating on a state of type s and giving a result
@@ -14,6 +17,13 @@ import qualified Data.Map as M
 -}
 newtype State s a = State { runState :: s -> (a, s) }
 
+{-
+    ME: The important part about state is that it is a `newtype` of a function.
+
+    `State s a` is just a wrapper for `runState :: s -> (a, s)` which is a function.
+-}
+
+
 -- push :: a -> [a] -> [a]
 -- pop :: [a] -> a
 
@@ -22,7 +32,7 @@ newtype State s a = State { runState :: s -> (a, s) }
     See http://learnyouahaskell.com/for-a-few-monads-more#state
 
     (push a) is seen as a computation operating on a state of type [a]
-    (a stack) and returning an unimportant result. What matters is the new 
+    (a stack) and returning an unimportant result. What matters is the new
     state (stack), obtained by pushing the given element onto top
     of the old stack.
 
@@ -33,6 +43,27 @@ newtype State s a = State { runState :: s -> (a, s) }
 -}
 push :: a -> State [a] ()
 push a = State $ \s -> ((), a : s)
+
+{-
+    `push 3` is effectively `State $ \s -> ((), 3 : s)` which is wrapper over a
+    lambda function which takes a "state" (a list of ints) and returns a pair of
+    the uninteresting result `()` and the updated result of pushing `3` onto
+    that list `3 : s`.
+
+    `runState (push 3)`: `runState` is the name of the function which accesses
+    the lambda `s -> (a, s)` from within a `State`.
+    So `runState (push 3)` results in the lambda: `\s -> ((), 3 : s)`.
+
+    Knowing the above:
+
+    >>> runState (push 3) [2, 1]
+    Firstly, `runState (push 3)` is `\s -> ((), 3 : s)` so the above line results in
+    >>> \s -> ((), 3 : s) [2, 1]
+        which is a function call .. a pretty verbose one as well
+    >>> ((), 3 : [2, 1])
+    >>> ((), [3, 2, 1])
+-}
+
 
 {-
     A pop operation on a stack. Does not check for the empty stack.
@@ -50,6 +81,19 @@ pop :: State [a] a
 pop = State $ \(a : s) -> (a, s)
 
 {-
+    Now, `pop` doesn't take an argument, but it creates a `State` with the inner
+    lambda `\(a : s) -> (a, s)` which pattern-matches so the argument of
+    `\s -> (a, s)` is a list with at least one element and returns the element
+    as the result and the rest of the list as the new state (reflecting the
+    pop).
+
+    >>> runState pop [2, 1]
+    >>> \(a : s) -> (a, s) [2, 1]
+        Which is an ordinary function call.
+    >>> (2, [1])
+-}
+
+{-
     Monad instance, for sequencing computations operating on the *same* type
     of state. Notice that s in (State s) is fixed for a given sequence
     of operations.
@@ -62,13 +106,79 @@ instance Monad (State s) where
         return :: a -> State s a
     -}
     return a = State $ \s -> (a, s)
-   
+
     -- (>>=) :: State s a -> (a -> State s b) -> State s b
     State st >>= f = State $ \s ->
         let (a, s') = st s
         in  runState (f a) s'
-        
+
+    {-
+        Let's recap:
+        - bind: (>>=) :: m a -> (a -> m b) -> m b
+            takes 2 arguments:
+                1) a value of type `a` which is "boxed" inside a context of type `m`
+                - For our State example here, `m` is `State s`
+                2) a function which takes as input a value of type `a` and returns
+                a value of type `b` which is "boxed" inside a type `m`
+                - For our example `push :: a -> State [a] ()` could be and example
+                which is an operation (`State` in itself is also an operation (lambda))
+            In our example, `(>>=)` does :
+            1) Unboxes `m a` which is `State s a` into `State st`
+                and now we can access the `runState` which is `st`
+            2) Creates a new `State` which will return in the end which takes a
+                value of type `s` (from `State s a`)
+            3) Applies the `runState` `st` on that state `s`
+            4) Pattern-matches the resul to access the new result `a` and the new
+                state `s`.
+            5) Uses the funtion `f` (argument to bind) to apply it to the result
+                `a`. This will result in a `State s b`
+            6) Then will apply `runState` onto the new State `State s b` which is
+                just a way of accessing the inner lamba
+            7) Runs that lambda with the `s'` as argument and this will result in
+                a pair of a new result `a'` let's say and a new state `s''` let's
+                say
+            8) The final `State s b` returned by the `(>>=)` (bind) call is a
+                lambda which takes as input the state `s` from step 2) and return
+                the pair returned at step 7)
+    -}
+
     -- st1 >> st2 = st1 >>= const st2
+
+    {-
+        (>>) :: m a -> m b -> m b
+        (>>) this function is defined as
+        st1 >> st2 = st1 >>= const st2
+        The interesting part is `const st2` because `const :: a -> b -> a` takes
+        2 arguments and returns the first one
+
+        Combined with (>>=) defined above we would have
+        State st >>= f = State $ \s ->
+            let (a, s') = st s
+            in runState (f a) s'
+
+        For simplicity replace `st1` with `State st1` so we already have
+        pattern-matched input.Applicative
+
+        State st1 >> State st2 = State st1 >>= (const State st2)
+            = State $ \s ->
+                let (a, s') = st1 s
+                in runState (const (State st2) a) s'
+            = State $ \s ->
+                let (a, s') = st1 s
+                in runState (State st2) s'
+            = State $ \s ->
+                let (a, s') = st1 s
+                in st2 s'
+        ----------
+        State st1 >> State st2 = State $ \s ->
+            let (_, s') = st1 s
+            in st2 s'
+
+        Which means that we construct a lambda (an operation) whose input is modified
+        by the first's state operation (`st1 s`), the result is discarded, but the
+        state is kept `s'` and then modify it with the action of the second state.
+    -}
+
 
 {-
     Computation operating on a state of type s and returning that very state
@@ -113,7 +223,7 @@ modify f = State $ \s -> ((), f s)
 
     >>> runState pushLength1 [1, 2]
     ((), [2, 1, 2])
--}        
+-}
 pushLength1 :: State [Int] ()
 pushLength1 =   pop            -- remove the top element using pop,
             >>= push           -- pass it on to push, which places it back,
