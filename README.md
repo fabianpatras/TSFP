@@ -75,3 +75,16 @@ At least for `Interpreter` part which is the main one and by far the hardest, I'
     - `cabal test`
       - will run the test suite defined in `Interpreter.cabal`, which is `InterpreterTest.hs`
       - some tests are commented out.
+
+- Lab 06: `Evaluation using the state monad`
+  - Link: http://elf.cs.pub.ro/tsfp/labs/state
+  - Path: (Start from `EvalBigM`) [`Interpreter/src/Evaluation/Big.hs`](Interpreter/src/Evaluation/Big.hs)
+  - This lab consisted of:
+    - Creating a `newtype` for a `State` monad with the state being the `Context` used for evaluation -> `Eval Expression`.
+    - Implementing `evalM`: the equivalent of `eval` functions that make use of `Eval Expression`.
+      - This enables us to not have to always pass the context around as it is hidden in the `Eval Expression`.
+      - Implementing `eval` using `evalM` is very elegant.
+    - Implementing `evalBigM`: the equivalent of `evalBig` function that makes use of `Eval Expression`.
+      - `evalBig` can't be implemented using `evalBigM` because of the different types of the single stepper function (`eval` and `evalM`).
+    - Implementing `evalListM`: the equivalent of `evalList` function that makes use of `Eval Expression`.
+      - The implementation is also very clean, using monads helps.
