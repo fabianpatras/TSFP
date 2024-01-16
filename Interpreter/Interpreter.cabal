@@ -9,6 +9,7 @@ executable Interpreter
   main-is:         Main.hs
   build-depends:
                    base >= 4,
+                   transformers,
                    containers
   ghc-options:     -Wall
   other-modules:

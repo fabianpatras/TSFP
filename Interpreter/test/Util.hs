@@ -5,7 +5,7 @@ import Syntax.Grammar (parseProgram)
 -- import Typing.Type
 import Evaluation.Context
 import qualified Data.Map as M
-import Data.Maybe (isJust)
+-- import Data.Maybe (isJust)
 
 internal :: String -> Expression
 internal = maybe (error "Syntax error!") head . parseProgram
