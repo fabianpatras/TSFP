@@ -17,16 +17,53 @@ module Writer where
 -}
 newtype Writer a = Writer { runWriter :: (a, [String]) }
 
-instance Monad Writer where
-    return = undefined
 
-    m >>= f = undefined
+{-
+    Nothing much to say here, simply map the result of the operation.
+-}
+instance Functor Writer where
+    fmap :: (a -> b) -> Writer a -> Writer b
+    fmap f (Writer (res, xs)) = Writer (f res, xs)
+
+instance Applicative Writer where
+    {-
+        Minimal implementation would be to wrap the value together with an empty
+        log into a `Writer`.
+    -}
+    pure :: a -> Writer a
+    pure res = Writer (res, [])
+
+    {-
+        `<*>` - sequential application without concatenation of logs because we
+        need to follow `Identity rule` that says:
+        ```
+        pure id <*> v = v
+        ```
+
+        .. I guess.
+    -}
+    (<*>) :: Writer (a -> b) -> Writer a -> Writer b
+    Writer (f, _) <*> Writer (x, xs) = Writer (f x, xs)
+
+
+instance Monad Writer where
+    {-
+        Shouldn't generate any logs out of thin air.
+    -}
+    return = pure
+
+    {-
+        For `Writer` monad, `bind` will concatenate the logs
+    -}
+    (Writer (a, xs)) >>= f = Writer $ case runWriter (f a) of
+        (res, ys) -> (res, xs ++ ys)
+
 
 {-
     Logs a list of messages.
 -}
 tell :: [String] -> Writer ()
-tell = undefined
+tell logs = Writer ((), []) >> Writer ((), logs)
 
 {-
     Checks whether a number is a multiple of both 3 and 7.
