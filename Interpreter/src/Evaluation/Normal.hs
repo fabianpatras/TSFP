@@ -8,6 +8,7 @@ import Syntax.Expression
 import qualified Data.Map.Lazy as M
 import Data.Maybe
 import Control.Monad.Trans.State.Lazy
+import Control.Applicative (Applicative(liftA2))
 
 evalM :: Expression            -- ^ Expression to be evaluated
       -> Eval Expression       -- ^ Evaluation operation with hidden Context
@@ -31,16 +32,13 @@ evalM expr = do
 
         -- 2) Eval, when we have something that is not a lambda as the left expression
         Application e e'' -> do
-            e' <- evalM e
-            return $ Application e' e''
+            liftA2 Application (evalM e) (return e'')
 
         -- Finally, evaluation of a definition modifies the context
         -- and returns the expression
         Definition var e -> do
-            Context ctx <- get
-            put $ Context $ M.insert var e ctx
+            modify (\(Context ctx) -> Context $ M.insert var e ctx)
             return e
-
 
 {-|
     Small-step normal-order evaluation of a given expression,

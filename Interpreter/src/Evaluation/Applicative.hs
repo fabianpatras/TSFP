@@ -7,6 +7,7 @@ import Evaluation.Context
 import qualified Data.Map.Lazy as M
 import Data.Maybe
 import Control.Monad.Trans.State.Lazy
+import Control.Applicative (Applicative (liftA2))
 
 evalM :: Expression            -- ^ Expression to be evaluated
       -> Eval Expression       -- ^ Evaluation operation with hidden Context
@@ -32,19 +33,19 @@ evalM expr = do
         -- It NEEDS to be declared before `Eval_1` so Haskell will pick the particular case over
         -- the generic one
         Application lambda@(Lambda _ _) e -> do
-            e' <- evalM e
-            return $ Application lambda e'
+            -- old:
+            -- e' <- evalM e
+            -- return $ Application lambda e'
+            fmap (Application lambda) (evalM e)
 
         -- 2) Eval_1, When the left expression can be evaluated, evaluate it
         Application e e'' -> do
-            e' <- evalM e
-            return $ Application e' e''
+            liftA2 Application (evalM e) (return e'')
 
         -- Finally, evaluation a definition modifies the context
         -- and returns the epression
         Definition var e -> do
-            Context ctx <- get
-            put $ Context $ M.insert var e ctx
+            modify (\(Context ctx) -> Context $ M.insert var e ctx)
             return e
 {-|
     Small-step applicative-order evaluation of a given expression,
